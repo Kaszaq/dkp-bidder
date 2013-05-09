@@ -1,0 +1,10 @@
+syntax: glob
+Libs/AceTimer-3.0
+Libs/AceSerializer-3.0
+Libs/AceLocale-3.0
+Libs/AceEvent-3.0
+Libs/AceComm-3.0
+Libs/AceAddon-3.0
+Libs/AceGUI-3.0
+Libs/CallbackHandler-1.0
+Libs/LibStub
