@@ -37,7 +37,7 @@ function GS:SetFontLook(f)
 		f:SetFontObject(font)
 	elseif f:IsObjectType("Button") then
 	local fontHighlight=CreateFont(tostring(self).."guiskinfonthighlight");
-	local fontDisabled=CreateFont(tostring(self).."guiskinfontdiabled");
+	local fontDisabled=CreateFont(tostring(self).."guiskinfontdisabled");
 		font:SetFont(l.font,l.fontsize);
 		fontDisabled:SetFont(l.font,l.fontsize);
 		fontHighlight:SetFont(l.font,l.fontsize);
@@ -49,6 +49,7 @@ function GS:SetFontLook(f)
 		f:SetHighlightFontObject(fontHighlight);
 	end
 end
+
 function GS:SetButtonLook(f)
 	local l=self:GetLayout();
 	self:SetFontLook(f)
@@ -117,8 +118,6 @@ end
 -- create Texture function
 function GS:CreateTexture(name,level,width,height,point,relativeTo,point2,x,y,texturePath)
 	local texture=self:CreateTexture(name,level);
-
-
 	texture:SetWidth(width);
 	texture:SetHeight(height);
 	texture:SetTexCoord(0, 1, 0, 1);
@@ -129,13 +128,27 @@ function GS:CreateTexture(name,level,width,height,point,relativeTo,point2,x,y,te
 	return texture;
 end
 
-function GS:CreateFontString(name,level,text,point,relativeTo,point2,x,y)
+function GS:CreateTextureButton(name,parent,level,width,height,point,relativeTo,point2,x,y,texturePath)
+	bf = CreateFrame("Button", name, parent)
+	bf:SetFrameLevel(10)
+	bf:SetHeight(height)
+	bf:SetWidth(width)
+	bf:SetNormalTexture(texturePath)
+	bf:SetHighlightTexture(texturePath, 0.2)
+	bf:SetAlpha(0.8)
+	bf:SetPoint(point, relativeTo, point2, x, y);
+	bf:Show()
+	bf:RegisterForClicks("LeftButtonUp", "RightButtonUp")
+	return bf
+end
 
+function GS:CreateFontString(name,level,text,point,relativeTo,point2,x,y)
 	local fs=self:CreateFontString(name,level,"GameFontNormal");
 	if point then fs:SetPoint(point,relativeTo,point2,x,y); end
 	fs:SetText(text);
 	return fs;
 end;
+
 function GS:CreateCheckBox(text)
 	local frame = CreateFrame("CheckButton", nil, self,"InterfaceOptionsCheckButtonTemplate");
 	frame:SetWidth(24);
@@ -144,6 +157,28 @@ function GS:CreateCheckBox(text)
 	frame.text:SetTextColor(1,1,1,1);
 	return frame;
 end;
+
+function GS:CreateEditBox(name, width, height, point, relativeTo, point2,x, y)
+	local f= CreateFrame("EditBox", name, relativeTo, "InputBoxTemplate");
+	f:SetPoint(point, relativeTo,point2, x,y);
+	f:SetCursorPosition(0);
+	f:SetWidth(width);
+	f:SetHeight(height);
+	f:SetAutoFocus(false);
+	f:SetScript("OnEscapePressed",function(self)
+		f:SetText("")
+		self:ClearFocus();
+	end)
+	return f;
+end
+
+function GS:CreateButton(name, text, width, point, relativeTo, point2, x, y)
+	local f= CreateFrame("Button",name, relativeTo, "UIPanelButtonTemplate");
+	f:SetPoint(point,relativeTo,point2,x,y);
+	f:SetText(text);
+	f:SetWidth(width);
+	return f;
+end
 
 function GS:CreateFrame(name,title,frameType,width,height,point,relativeTo,point2,x,y)-- naming should be adjusted
 	local f=CreateFrame("Frame",name,UIParent,"GameTooltipTemplate");
@@ -186,7 +221,7 @@ function GS:CreateFrame(name,title,frameType,width,height,point,relativeTo,point
 	--titleframe and text
 	local v=f.view;
 	v.titleFrame = CreateFrame("Frame",name.."_titleFrame",f)
-	v.titleString=self.CreateFontString(v.titleFrame,name.."_title","ARTWORK",title,"TOP",v.titleFrame,"TOP",18,-14);
+	v.titleString=GS.CreateFontString(v.titleFrame,name.."_title","ARTWORK",title,"TOP",v.titleFrame,"TOP",18,-14);
 	v.titleString:SetFont([[Fonts\MORPHEUS.ttf]],14);
 	v.titleString:SetTextColor(1,1,1,1);--shadow??
 
@@ -204,6 +239,6 @@ function GS:CreateFrame(name,title,frameType,width,height,point,relativeTo,point
 	v.titleFrame:SetScript("OnMouseUp",function()
 		f:StopMovingOrSizing()
 	end)
-	v.titleFrame.texture=self.CreateTexture(v.titleFrame,name.."_titleFrameTexture","ARTWORK",300,68,"TOP", v.titleFrame, "TOP", 0,2,[[Interface\DialogFrame\UI-DialogBox-Header]]);
+	v.titleFrame.texture=GS.CreateTexture(v.titleFrame,name.."_titleFrameTexture","ARTWORK",300,68,"TOP", v.titleFrame, "TOP", 0,2,[[Interface\DialogFrame\UI-DialogBox-Header]]);
 	return f;
 end;

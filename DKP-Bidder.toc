@@ -1,8 +1,9 @@
-## Interface: 50200
+## Interface: 50300
 ## Title: DKP - |CFF2459FFBidder
 ## Notes: Bidder for DKP points. Usable as standalone bidder, or with DKP - Manager to manage points.
 ## Dependencies:
 ## OptionalDeps: Ace3
-## Version: 520 2xx
-## SavedVariablesPerCharacter: DKPbidderDB
+## Version: 530 101
+## SavedVariables: DKPbidderDB
+
 DkpBidderGUI.xml
