@@ -109,9 +109,10 @@ function GRI:UpdateData()
 		lastDataUpdate=GetTime();
 		local total= GetNumGuildMembers();
 		local makealt={};
+		local realmName="-"..GetRealmName();
 		for i=1,total do
-			name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName, achievementPoints, achievementRank, isMobile = GetGuildRosterInfo(i)
-
+			local name, rank, rankIndex, level, class, zone, note, officernote, online, status, classFileName, achievementPoints, achievementRank, isMobile = GetGuildRosterInfo(i)
+			name=string.gsub(name, realmName, "")
 			players[name]={};
 			players[name]["lastUpdateTime"]=lastDataUpdate;
 			players[name]["class"]=class;
