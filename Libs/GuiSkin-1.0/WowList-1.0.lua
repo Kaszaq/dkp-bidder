@@ -79,7 +79,7 @@ function WL:CreateNew(name,data,parentFrame)
 	self:Embed(f);
 
 	f.rowSize=data.height/data.rows;
-	f.height=f.rowSize*(data.rows+1);
+f.height=f.rowSize*(data.rows+1);
 
 	f:CreateModel(data);
 	return f;

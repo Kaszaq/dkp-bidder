@@ -5,12 +5,14 @@ local L = LibStub("AceLocale-3.0"):GetLocale("DKP-Bidder")
 function B:GROUP_ROSTER_UPDATE()
 	if B.bidMaster then
 		if not UnitInRaid("player") then
+
 			self:StopBids();
+
 		else
 			local name;
-			for i=1, 40 do
+			for i=1, MAX_RAID_MEMBERS do
 				name=GetRaidRosterInfo(i);
-				if name and name==B.bidMaster then
+				if name==B.bidMaster then
 					t=true;
 					break;
 				end;
@@ -128,102 +130,27 @@ function B:OnCommReceived(prefix, message, distribution, sender)
 				B.view.overBidButton:Enable();
 				B.view.bidButton:Enable();
 				PlaySound("RaidWarning", "Master");
-				
-				--Blacklist Algorithm--
-			--====================================================================================
-				local itemname,_,_,_,_,_,itemsubtype,_,itemEquipLoc=GetItemInfo(data.item)
-				local itemstats={}
-				local showbidder=true
-				itemstats=GetItemStats(data.item)
-				if itemstats then
-					if bidDB.blacklist and bidDB.blacklist[itemsubtype] and itemEquipLoc~="INVTYPE_CLOAK" then
-						showbidder=false
-					elseif bidDB.blacklist then
-						for statname, value in pairs(itemstats) do
-							if bidDB.blacklist.bystat[statname] and bidDB.blacklist.bystat[statname]==true then
-								showbidder=false
-							end
-						end
-					end
-				end
-				
-				if itemsubtype=="Junk" then
-					local tokens={[1]="Conqueror",[2]="Protector", [3]="Vanquisher"}
-					for i=1, #tokens do
-						if string.find(itemname, tokens[i]) then
-							if bidDB.blacklist[tokens[i]] then
-								showbidder=false								
-							end
-						end
-					end
-				end
-				
-				if showbidder then
-					B.mainFrame:Show()
-				elseif bidDB.blacklist.AutoHide then
-					B.mainFrame:Hide()
-					--self:Print("Item "..data.item.." is Blacklisted ")
-				else
-					--self:Print("Item "..data.item.." is Blacklisted ")
-				end
-			--========================================================================================
-
+				B.mainFrame:Show()
 			elseif msg=="stopBids" then
 				if sender==B.bidMaster then
 					self:StopBids()
+
 				end
 			elseif msg=="askForVersion" then
+
 				B:Send("returnVersion",self.ver,"WHISPER",sender);
 			elseif msg=="error" then
 				self:Print(B.colors["red"]..L["Error message"]..B.colors["close"]..": '"..data..B.colors["close"].."'");
 			elseif msg=="info" then
-				local a,b,amount=string.find(data,L["Your dkp has changed by .+\. Reason: .+\. Your new dkp amount is (.+)"]);
+				local a,b,amount=string.find(data,L["Your dkp have changed by .+\. Reason: .+\. Your new dkp amount is (.+)"]);
 				if a~=nil then
 					GRI:SetNet(UnitName("player"),amount);
+
 					B.view.rosterFrame:UpdateList();
 					B.view.dkpAmountString:SetText(L["DKP: "]..GRI:GetNet(UnitName("player")));
 				end;
 				self:Print(B.colors["blue"]..L["Info"]..B.colors["close"]..": "..data..B.colors["close"].."");
-			elseif msg=="querystandby" then
-				local v=B.view.standbyQuery.view;
-				local showTimer, remindTimer, endTimer
-				self:Print(data.boss.." has been slain! A Popup window will display in ~10 seconds, click 'Yes' to receive DKP")
-				v.standbyQueryText1:SetText(data.boss.." has been slain!")
-				v.standbyQueryText2:SetText("Receive "..data.amount.." DKP?")
-				v.acceptQuery:SetScript("OnClick", function()
-					B:Send("awardstandby", data, "WHISPER", sender)
-					B.view.standbyQuery:Hide()
-					self:CancelTimer(showTimer)
-					self:CancelTimer(remindTimer)
-					self:CancelTimer(endTimer)
-					v.standbyQueryText1:SetText("")
-					v.standbyQueryText2:SetText("")
-					v.acceptQuery:SetScript("OnClick", function()
-						B:Print("That action is no longer available.")
-					end)
-				end)
-				
-				--I need to create a timer for 10 seconds that shows the popup
-				showTimer=self:ScheduleTimer(function()
-					B.view.standbyQuery:Show()
-					PlaySound("ReadyCheck", "Master")
-				end, 10)
-				
-				remindTimer=self:ScheduleTimer(function()
-					B:Print("You only have 30 seconds left to take action!")
-					PlaySound("RaidWarning", "Master");
-				end,40)
-				--Then I need to create another timer for 70seconds that hides the popup
-				endTimer=self:ScheduleTimer(function()
-					B:Print("Time has run out!")
-					PlaySound("RaidWarning", "Master");
-					B.view.standbyQuery:Hide()
-					v.standbyQueryText1:SetText("")
-					v.standbyQueryText2:SetText("")
-					v.acceptQuery:SetScript("OnClick", function()
-						B:Print("That action is no longer available.")
-					end)
-				end, 70)
+
 			end
 		end
 	end

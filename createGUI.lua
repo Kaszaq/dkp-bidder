@@ -2,57 +2,10 @@ local gs=LibStub("GuiSkin-1.0");
 local B=LibStub("AceAddon-3.0"):GetAddon("DKP Bidder");
 local L = LibStub("AceLocale-3.0"):GetLocale("DKP-Bidder")
 local GRI=LibStub("GuildRosterInfo-1.0");--todo tutaj tez?
-local BidderLDB = LibStub("LibDataBroker-1.1")
-local BidderIcon = LibStub("LibDBIcon-1.0", true)
-
-local tooltips={
-	["blistcloth"]={
-		[1]="Ignore "..B.color["MAGENTA"].."Cloth|r biddings",},
-	["blistleather"]={
-		[1]="Ignore "..B.color["MAGENTA"].."Leather|r biddings"},
-	["blistmail"]={
-		[1]="Ignore "..B.color["MAGENTA"].."Mail|r biddings"},
-	["blistplate"]={
-		[1]="Ignore "..B.color["MAGENTA"].."Plate|r biddings"},
-	["blistconq"]={
-		[1]="Ignore "..B.color["MAGENTA"].."Conqueror|r tokens"},
-	["blistprot"]={
-		[1]="Ignore "..B.color["MAGENTA"].."Protector|r tokens"},
-	["blistvanq"]={
-		[1]="Ignore "..B.color["MAGENTA"].."Vanquisher|r tokens"},
-	["blistint"]={
-		[1]="Ignore items with "..B.color["MAGENTA"].."Intellect|r"},
-	["blistspi"]={
-		[1]="Ignore items with "..B.color["MAGENTA"].."Spirit|r"},
-	["blistagi"]={
-		[1]="Ignore items with "..B.color["MAGENTA"].."Agility|r"},
-	["bliststr"]={
-		[1]="Ignore items with "..B.color["MAGENTA"].."Strength|r"},
-	["autohide"]={
-		[1]=B.color["MAGENTA"].."Hides|r DKP Bidder when bidding starts on a blacklisted item"},
-}
-local BidderLauncher = BidderLDB:NewDataObject("DKP Bidder", 
-	{label="DKP Bidder",
-	type = "data source",
-	text = "DKP Bidder",
-	icon = "Interface\\Addons\\DKP-Bidder\\Arts\\Logo2.tga",
-	OnClick = function(clickedframe, button)
-		--if button == "RightButton" then B:MinimapMenu() else B:ToggleBidder() end
-		B:ToggleBidder()
-	end,
-	OnTooltipShow = function(tt)
-		tt:AddLine("DKP Bidder")
-		tt:AddLine(B.color.WHITE .. "Click|r to toggle DKP Bidder")
-		--tt:AddLine(B.color.WHITE .. "Right-Click|r for options")
-		--tt:AddLine(B.color.WHITE .. "Shift+Click|r to hide this button")
-	end,
-	}
-)
-
 function B:CreateGUI()
-	B.mainFrame=CreateFrame("Frame","DkpBidderGUIframe",UIParent);
+	Bidder.mainFrame=CreateFrame("Frame","DkpBidderGUIframe",UIParent);
 	table.insert(_G.UISpecialFrames, "DkpBidderGUIframe");
-	local f=B.mainFrame;
+	local f=Bidder.mainFrame;
 	f:SetWidth(265);
 	f:SetHeight(395);
 	f:Hide();
@@ -104,43 +57,7 @@ function B:CreateGUI()
 	cb:SetHeight(32);
 	--//
 
-	
-	v.optionsButton = CreateFrame("Button", self.ver.."optionsButton", f)
-	v.optionsButton:SetHeight(20)
-	v.optionsButton:SetWidth(20)
-	v.optionsButton:SetNormalTexture("Interface\\Addons\\DKP-Bidder\\arts\\icon-config")
-	v.optionsButton:SetHighlightTexture("Interface\\Addons\\DKP-Bidder\\arts\\icon-config", 0.2)
-	v.optionsButton:SetAlpha(0.8)
-	v.optionsButton:SetPoint("TOPRIGHT", self.mainFrame, "TOPRIGHT", -22, -13);
-	v.optionsButton:Show()
-	v.optionsButton:RegisterForClicks("LeftButtonUp", "RightButtonUp")
-	v.optionsButton:SetScript("OnClick", function()
-		local _,_,_,x = v.optionsFrame:GetPoint(v.optionsFrame:GetNumPoints())
-		if x>=-100 then
-			v.optionsFrame:SetPoint("TOPLEFT", f, "TOPRIGHT", -182,-18)
-		else
-			v.optionsFrame:SetPoint("TOPLEFT", f, "TOPRIGHT", -10,-18)
-		end
-	end)
-	
-	
-	v.optionsFrame=CreateFrame("Frame",self.ver.."_optionsFrame",f);
-	--v.optionsFrame:EnableMouse(true);
-	v.optionsFrame:SetWidth(200);
-	v.optionsFrame:SetHeight(361);
-	v.optionsFrame:SetPoint("TOPLEFT", f, "TOPRIGHT", -182,-18)
-	v.optionsFrame:SetMovable(true)
-	v.optionsFrame:SetFrameLevel(f:GetFrameLevel()-1)
-	v.optionsFrame:SetBackdrop({
-		  bgFile =[[Interface\FrameGeneral\UI-Background-Rock]],
-		  edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
-		  tile = false,
-		  atileSize = 32,
-		  edgeSize =32,
-		  insets = { left=11,right=11, top=10, bottom=10}
-	})
-	B:CreateOptions()
-	
+
 	--top gui part
 	v.dkpAmountString=gs.CreateFontString(B.mainFrame,self.ver.."_dkpAmountString","ARTWORK","DKP:","TOPLEFT",B.mainFrame,"TOPLEFT",70,-45);
 	local t=v.dkpAmountString
@@ -263,26 +180,9 @@ function B:CreateGUI()
 	v.openRosterButton:SetText(L["Open DKP roster"]);
 	v.openRosterButton:SetPoint('TOPLEFT', v.overBidButton,'BOTTOMLEFT', 0,-5)
 	v.openRosterButton:SetScript("OnClick",function(self)
-		if B.view.rosterFrame:IsShown() then
-			B.view.rosterFrame:Hide();
-		else
-			B.view.rosterFrame:Show();
-		end
+		B.view.rosterFrame:Show();
 	  end)
 	--//Roster Button
-	
-	
-	-- FORCE SHOW STANDBY QUERY WINDOW - FOR TESTING
-	-- v.openStandbyButton= CreateFrame("Button", nil, B.mainFrame, "UIPanelButtonTemplate")
-	-- v.openStandbyButton:SetText(L["Open Standby Query"]);
-	-- v.openStandbyButton:SetPoint('TOPLEFT', v.overBidButton,'BOTTOMLEFT', 180,-5)
-	-- v.openStandbyButton:SetScript("OnClick",function(self)
-		-- if B.view.standbyQuery:IsShown() then
-			-- B.view.standbyQuery:Hide()
-		-- else
-			-- B.view.standbyQuery:Show()
-		-- end
-	  -- end)
 
 
 
@@ -294,260 +194,18 @@ function B:CreateGUI()
 	v.timerFrame:SetHeight(16);
 	--self:CreateTimerFrame(30);
 	v.rosterFrame=B:CreateRosterFrame();
-	v.standbyQuery=B:CreateStandbyQueryFrame();
-	
+
 	--disable buttons
 	v.overBidButton:Disable();
 	v.bidButton:Disable();
+	self:CreateMinimapIcon();
 
 end
 
-function B:CreateOptions()
-	local f=B.mainFrame
-	local v=self.view
-	local y, newline, spacer=-36, 23, 43
-	
-	if not v.blisttext then
-		v.blisttext=gs.CreateFontString(v.optionsFrame,self.ver.."_BlackListText","ARTWORK","Blacklist","TOP",v.optionsFrame,"TOP",4,-14);
-		v.blisttext:SetFont([[Fonts\MORPHEUS.ttf]], 20)--[[Fonts\MORPHEUS.ttf]] --,16);
-		
-		--CLOTH--
-		v.blistCloth=CreateFrame("CheckButton",self.ver.."_blistCloth",v.optionsFrame , "UICheckButtonTemplate");
-		v.blistCloth:SetPoint("TOPLEFT",v.optionsFrame, "TOPLEFT", 25, y)
-		v.blistCloth:SetFrameLevel(f:GetFrameLevel()-1)
-		_G[v.blistCloth:GetName() .. "Text"]:SetText("Cloth")
-		
-		--LEATHER--
-		v.blistLeather=CreateFrame("CheckButton",self.ver.."_blistLeather",v.optionsFrame , "UICheckButtonTemplate");
-		v.blistLeather:SetPoint("TOPLEFT",v.optionsFrame, "TOPLEFT", 90, y)
-		v.blistLeather:SetFrameLevel(f:GetFrameLevel()-1)
-		_G[v.blistLeather:GetName() .. "Text"]:SetText("Leather")
-		
-		y=y-newline
-		--MAIL--
-		v.blistMail=CreateFrame("CheckButton",self.ver.."_blistMail",v.optionsFrame , "UICheckButtonTemplate");
-		v.blistMail:SetPoint("TOPLEFT",v.optionsFrame, "TOPLEFT", 25, y)
-		v.blistMail:SetFrameLevel(f:GetFrameLevel()-1)
-		_G[v.blistMail:GetName() .. "Text"]:SetText("Mail")
-		
-		--PLATE--
-		v.blistPlate=CreateFrame("CheckButton",self.ver.."_blistPlate",v.optionsFrame , "UICheckButtonTemplate");
-		v.blistPlate:SetPoint("TOPLEFT",v.optionsFrame, "TOPLEFT", 90, y)
-		v.blistPlate:SetFrameLevel(f:GetFrameLevel()-1)
-		_G[v.blistPlate:GetName() .. "Text"]:SetText("Plate")
-		
-		y=y-spacer
-		--CONQUEROR TOKENS--
-		v.blistConq=CreateFrame("CheckButton",self.ver.."_blistConq",v.optionsFrame , "UICheckButtonTemplate");
-		v.blistConq:SetPoint("TOPLEFT",v.optionsFrame, "TOPLEFT", 25, y)
-		v.blistConq:SetFrameLevel(f:GetFrameLevel()-1)
-		_G[v.blistConq:GetName() .. "Text"]:SetText("Conqueror Tokens")
-		
-		y=y-newline
-		--PROTECTOR TOKENS--
-		v.blistProt=CreateFrame("CheckButton",self.ver.."_blistProt",v.optionsFrame , "UICheckButtonTemplate");
-		v.blistProt:SetPoint("TOPLEFT",v.optionsFrame, "TOPLEFT", 25, y)
-		v.blistProt:SetFrameLevel(f:GetFrameLevel()-1)
-		_G[v.blistProt:GetName() .. "Text"]:SetText("Protector Tokens")
-		
-		y=y-newline
-		--VANQUISHER TOKENS--
-		v.blistVanq=CreateFrame("CheckButton",self.ver.."_blistVanq",v.optionsFrame , "UICheckButtonTemplate");
-		v.blistVanq:SetPoint("TOPLEFT",v.optionsFrame, "TOPLEFT", 25, y)
-		v.blistVanq:SetFrameLevel(f:GetFrameLevel()-1)
-		_G[v.blistVanq:GetName() .. "Text"]:SetText("Vanquisher Tokens")
-		
-		y=y-spacer
-		--INTELLECT--
-		v.blistInt=CreateFrame("CheckButton",self.ver.."blistInt",v.optionsFrame , "UICheckButtonTemplate");
-		v.blistInt:SetPoint("TOPLEFT",v.optionsFrame, "TOPLEFT", 25, y)
-		v.blistInt:SetFrameLevel(f:GetFrameLevel()-1)
-		_G[v.blistInt:GetName() .. "Text"]:SetText("Intellect")
-		
-		y=y-newline
-		--SPIRIT--
-		v.blistSpi=CreateFrame("CheckButton",self.ver.."_blistSpi",v.optionsFrame , "UICheckButtonTemplate");
-		v.blistSpi:SetPoint("TOPLEFT",v.optionsFrame, "TOPLEFT", 25, y)
-		v.blistSpi:SetFrameLevel(f:GetFrameLevel()-1)
-		_G[v.blistSpi:GetName() .. "Text"]:SetText("Spirit")
-		
-		y=y-newline
-		--AGILITY--
-		v.blistAgi=CreateFrame("CheckButton",self.ver.."blistAgi",v.optionsFrame , "UICheckButtonTemplate");
-		v.blistAgi:SetPoint("TOPLEFT",v.optionsFrame, "TOPLEFT", 25, y)
-		v.blistAgi:SetFrameLevel(f:GetFrameLevel()-1)
-		_G[v.blistAgi:GetName() .. "Text"]:SetText("Agility")
-		
-		y=y-newline
-		--STRENGTH--
-		v.blistStr=CreateFrame("CheckButton",self.ver.."_blistStr",v.optionsFrame , "UICheckButtonTemplate");
-		v.blistStr:SetPoint("TOPLEFT",v.optionsFrame, "TOPLEFT", 25, y)
-		v.blistStr:SetFrameLevel(f:GetFrameLevel()-1)
-		_G[v.blistStr:GetName() .. "Text"]:SetText("Strength")
-		
-		y=y-spacer
-		--AUTO HIDE?--
-		v.autoHide=CreateFrame("CheckButton",self.ver.."_autoHide",v.optionsFrame , "UICheckButtonTemplate");
-		v.autoHide:SetPoint("TOPLEFT",v.optionsFrame, "TOPLEFT", 25, y)
-		v.autoHide:SetFrameLevel(f:GetFrameLevel()-1)
-		--_G[v.autoHide:GetName() .. "Text"]:SetFont("GameFontNormal",13)
-		_G[v.autoHide:GetName() .. "Text"]:SetText("Auto Hide?")
-		
-	end
-	
-	v.blistCloth:Show()
-	v.blistLeather:Show()
-	v.blistMail:Show()
-	v.blistPlate:Show()
-	v.blistConq:Show()
-	v.blistProt:Show()
-	v.blistVanq:Show()
-	v.blistInt:Show()
-	v.blistSpi:Show()
-	v.blistAgi:Show()
-	v.blistStr:Show()
-	v.autoHide:Show()
-	
-	
-	--if not bidDB.blacklist then
-	--	bidDB.blacklist={}
-	--end
-	
-	v.blistCloth:SetScript("OnEnter", function(self) B:OnEnter(self,"blistcloth") end)
-	v.blistCloth:SetScript("OnLeave", function(self) B:OnLeave(self) end)
-	v.blistCloth:SetChecked(bidDB.blacklist.Cloth)
-	v.blistCloth:SetScript("OnClick", function()
-		if v.blistCloth:GetChecked()==1 then
-			bidDB.blacklist.Cloth=true
-		else
-			bidDB.blacklist.Cloth=false
-		end
-	end);
-	
-	v.blistLeather:SetScript("OnEnter", function(self) B:OnEnter(self,"blistleather") end)
-	v.blistLeather:SetScript("OnLeave", function(self) B:OnLeave(self) end)
-	v.blistLeather:SetChecked(bidDB.blacklist.Leather)
-	v.blistLeather:SetScript("OnClick", function()
-		if v.blistLeather:GetChecked()==1 then
-			bidDB.blacklist.Leather=true
-		else
-			bidDB.blacklist.Leather=false
-		end
-	end);
 
-	v.blistMail:SetScript("OnEnter", function(self) B:OnEnter(self,"blistmail") end)
-	v.blistMail:SetScript("OnLeave", function(self) B:OnLeave(self) end)	
-	v.blistMail:SetChecked(bidDB.blacklist.Mail)
-	v.blistMail:SetScript("OnClick", function()
-		if v.blistMail:GetChecked()==1 then
-			bidDB.blacklist.Mail=true
-		else
-			bidDB.blacklist.Mail=false
-		end
-	end);
-
-	v.blistPlate:SetScript("OnEnter", function(self) B:OnEnter(self,"blistplate") end)
-	v.blistPlate:SetScript("OnLeave", function(self) B:OnLeave(self) end)	
-	v.blistPlate:SetChecked(bidDB.blacklist.Plate)
-	v.blistPlate:SetScript("OnClick", function()
-		if v.blistPlate:GetChecked()==1 then
-			bidDB.blacklist.Plate=true
-		else
-			bidDB.blacklist.Plate=false
-		end
-	end);
-
-	v.blistConq:SetScript("OnEnter", function(self) B:OnEnter(self,"blistconq") end)
-	v.blistConq:SetScript("OnLeave", function(self) B:OnLeave(self) end)	
-	v.blistConq:SetChecked(bidDB.blacklist.Conqueror)
-	v.blistConq:SetScript("OnClick", function()
-		if v.blistConq:GetChecked()==1 then
-			bidDB.blacklist.Conqueror=true
-		else
-			bidDB.blacklist.Conqueror=false
-		end
-	end);
-
-	v.blistProt:SetScript("OnEnter", function(self) B:OnEnter(self,"blistprot") end)
-	v.blistProt:SetScript("OnLeave", function(self) B:OnLeave(self) end)		
-	v.blistProt:SetChecked(bidDB.blacklist.Protector)
-	v.blistProt:SetScript("OnClick", function()
-		if v.blistProt:GetChecked()==1 then
-			bidDB.blacklist.Protector=true
-		else
-			bidDB.blacklist.Protector=false
-		end
-	end);
-
-	v.blistVanq:SetScript("OnEnter", function(self) B:OnEnter(self,"blistvanq") end)
-	v.blistVanq:SetScript("OnLeave", function(self) B:OnLeave(self) end)	
-	v.blistVanq:SetChecked(bidDB.blacklist.Vanquisher)
-	v.blistVanq:SetScript("OnClick", function()
-		if v.blistVanq:GetChecked()==1 then
-			bidDB.blacklist.Vanquisher=true
-		else
-			bidDB.blacklist.Vanquisher=false
-		end
-	end);
-	
-	v.blistInt:SetScript("OnEnter", function(self) B:OnEnter(self,"blistint") end)
-	v.blistInt:SetScript("OnLeave", function(self) B:OnLeave(self) end)
-	v.blistInt:SetChecked(bidDB.blacklist.bystat.ITEM_MOD_INTELLECT_SHORT)
-	v.blistInt:SetScript("OnClick", function()
-		if v.blistInt:GetChecked()==1 then
-			bidDB.blacklist.bystat.ITEM_MOD_INTELLECT_SHORT=true
-		else
-			bidDB.blacklist.bystat.ITEM_MOD_INTELLECT_SHORT=false
-		end
-	end);
-
-	v.blistAgi:SetScript("OnEnter", function(self) B:OnEnter(self,"blistagi") end)
-	v.blistAgi:SetScript("OnLeave", function(self) B:OnLeave(self) end)	
-	v.blistAgi:SetChecked(bidDB.blacklist.bystat.ITEM_MOD_AGILITY_SHORT)
-	v.blistAgi:SetScript("OnClick", function()
-		if v.blistAgi:GetChecked()==1 then
-			bidDB.blacklist.bystat.ITEM_MOD_AGILITY_SHORT=true
-		else
-			bidDB.blacklist.bystat.ITEM_MOD_AGILITY_SHORT=false
-		end
-	end);
-
-	v.blistStr:SetScript("OnEnter", function(self) B:OnEnter(self,"bliststr") end)
-	v.blistStr:SetScript("OnLeave", function(self) B:OnLeave(self) end)	
-	v.blistStr:SetChecked(bidDB.blacklist.bystat.ITEM_MOD_STRENGTH_SHORT)
-	v.blistStr:SetScript("OnClick", function()
-		if v.blistStr:GetChecked()==1 then
-			bidDB.blacklist.bystat.ITEM_MOD_STRENGTH_SHORT=true
-		else
-			bidDB.blacklist.bystat.ITEM_MOD_STRENGTH_SHORT=false
-		end
-	end);
-
-	v.blistSpi:SetScript("OnEnter", function(self) B:OnEnter(self,"blistspi") end)
-	v.blistSpi:SetScript("OnLeave", function(self) B:OnLeave(self) end)	
-	v.blistSpi:SetChecked(bidDB.blacklist.bystat.ITEM_MOD_SPIRIT_SHORT)
-	v.blistSpi:SetScript("OnClick", function()
-		if v.blistSpi:GetChecked()==1 then
-			bidDB.blacklist.bystat.ITEM_MOD_SPIRIT_SHORT=true
-		else
-			bidDB.blacklist.bystat.ITEM_MOD_SPIRIT_SHORT=false
-		end
-	end);
-
-	v.autoHide:SetScript("OnEnter", function(self) B:OnEnter(self,"autohide") end)
-	v.autoHide:SetScript("OnLeave", function(self) B:OnLeave(self) end)	
-	v.autoHide:SetChecked(bidDB.blacklist.AutoHide)
-	v.autoHide:SetScript("OnClick", function()
-		if v.autoHide:GetChecked()==1 then
-			bidDB.blacklist.AutoHide=true
-		else
-			bidDB.blacklist.AutoHide=false
-		end
-	end);
-end
 
 --SET TITLE - window with linked item or other useless info.
-function B:CreateTitle()
+function Bidder:CreateTitle()
 	local v=B.view;
 	v.titleFrame = CreateFrame("Frame",self.ver.."_TitleFrame",B.mainFrame)
 	v.titleString=gs.CreateFontString(B.mainFrame,self.ver.."_Title","ARTWORK","DKP Bidder","TOP",v.titleFrame,"TOP",18,-14);
@@ -578,7 +236,9 @@ function B:ShowGameTooltip()
 
 end
 
+
 B.timeLeft=0;
+
 function B:CreateTimerFrame(timeleft)--TODO: move this to gui lib, and fix so it wouldnt call onupdate all the time :/ create->remove create->remove
 	if timeleft==nil then timeleft=-1 end;
 	local v=B.view;
@@ -645,14 +305,22 @@ function B:CreateTimerFrame(timeleft)--TODO: move this to gui lib, and fix so it
 
 end
 
+
+
+
 function B:ToggleBidder()
-	if (B.mainFrame:IsShown()==nil) then self.mainFrame:Show(); else self.mainFrame:Hide(); end;
+	if (B.mainFrame:IsShown()==nil) then
+
+		self.mainFrame:Show();
+	else self.mainFrame:Hide()
+	end
 end
 
 function B:CreateRosterFrame()
 
 		local f=gs:CreateFrame(self.ver.."_RosterFrame","DKP Roster","BASIC",400,415,'LEFT',UIParent,'LEFT',100 ,0);--400 375
 		f:Hide();
+
 		f.showAlts=true;
 		f.showOffline=true;
 		f.view={};
@@ -771,8 +439,8 @@ function B:CreateRosterFrame()
 				self:GetParent().view.bidderList:UpdateView();
 			else
 				self:GetParent().view.bidderList:AddFilter("showRaidMembersOnly",function(data)
-					for i=1,40 do
-						if GetRaidRosterInfo(i) and GetRaidRosterInfo(i)==data[1].data.name then return true end;
+					for i=1,MAX_RAID_MEMBERS do
+						if GetRaidRosterInfo(i)==data[1].data.name then return true end;
 					end;
 					return false
 				end);
@@ -828,91 +496,111 @@ function B:CreateRosterFrame()
 		return f;
 end;
 
-function B:CreateStandbyQueryFrame()
-	B:Print("Standby Query creating.")
-	local f=gs:CreateFrame(self.ver.."_StandbyQueryFrame","Standby Query","BASIC",280,130,'CENTER',UIParent,'CENTER',0 ,0);--400 375
-	f:Hide()
-	f.view={}
-	local v=f.view
-	v.acceptQuery=gs:CreateButton(self.ver.."_acceptQuery", "Yes", 120, "CENTER", f,"CENTER", 0, -30)
-	--v.cancelQuery=gs:CreateButton(self.ver.."_cancelQuery", "No", 20, "LEFT", v.acceptQuery,"RIGHT", 60, 0)
-	--(name,level,text,point,relativeTo,point2,x,y)
-	v.standbyQueryText1=gs.CreateFontString(f, self.ver.."_standbyQueryText1", "ARTWORK", "Ragnaros has been slain!", "CENTER", f, "CENTER", 0, 25)
-	v.standbyQueryText2=gs.CreateFontString(f, self.ver.."_standbyQueryText2", "ARTWORK", "Receive 100 DKP?", "CENTER", f, "CENTER", 0, 4)
-	return f;
-end
-function B:RefreshOptions()
-	B:CreateOptions()
-end
 
-function B:OnEnter(self,arg)
-	if bidDB.enable.tooltips then
-		GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
-		for i=1,#tooltips[arg] do
-			GameTooltip:AddLine(tooltips[arg][i],1,1,1,1)
-		end
-		GameTooltip:Show()
-	end
-end
-
-function B:OnLeave(self)
-	if bidDB.enable.tooltips then
-		GameTooltip:Hide()
-		GameTooltip:ClearLines()
-	end
-end
 
 --  Minimap Button  --
-function B:MinimapMenu()
-	-- local mainList = {[1]="Cancel"}
-	-- local i = 1
-	-- for layoutname, layoutnames in pairs(pDB.layoutlist) do
-		-- savesList[i] = 
-			-- { text = layoutnames, notCheckable=true, hasArrow = true,
-				-- menuList = {
-					-- { text = "Restore", notCheckable=true, func = function() RM:startMover(layoutnames); end },
-					-- { text = "Invite", notCheckable=true, func = function() RM:inviteRaid(layoutnames); end },
-					-- { text = "Print", notCheckable=true, func = function() RM:PopupWindow(RM:printLayout(layoutnames)); end },
-				-- },
-			-- }
-		-- i = i+1
-	-- end
-	
-	-- if savesList == nil then
-		-- RM:Print("You have no Saved Layouts")
-	-- end
-		
-	local minimapmenu = {
-		{ text = "DKP Bidder", notCheckable=true, isTitle = true},
-		{ text = "Profiles", notCheckable=true, func = function() B:showConfigWindow(); end },
-	}
-	local minimapmenuFrame = CreateFrame("Frame", "MiniMapMenuFrame", UIParent, "UIDropDownMenuTemplate")
-	EasyMenu(minimapmenu, minimapmenuFrame, "cursor", 0 , 0, "MENU", 0.5);
+function B:ShowMinimapButton()
+	B.view.minimapIcon:Show()
+	B.DB.showMinimapIcon = true
+end
+function B:HideMinimapButton()
+	B.view.minimapIcon:Hide()
+	B.DB.showMinimapIcon = false
 end
 
-function B:ToggleMinimapButton()
-	if BidderIcon and not BidderIcon:IsRegistered("DKP Bidder") then
-		BidderIcon:Register("DKP Bidder", BidderLauncher, bidDB.minimapicon)
+function B:CheckMinimapStatus()
+	if not B.DB.showMinimapIcon then
+		B.view.minimapIcon:Hide()
+		return false;
 	end
-	if BidderIcon then
-		BidderIcon:Refresh("DKP Bidder", bidDB.minimapicon)
-		if bidDB.minimapicon.hide==true then
-			BidderIcon:Show("DKP Bidder")
-			bidDB.minimapicon.hide=false
-		elseif bidDB.minimapicon.hide==false then
-			BidderIcon:Hide("DKP Bidder")
-			self:Print("Minimap icon hidden")
-			bidDB.minimapicon.hide=true
-		end
-	end
+	return true;
 end
 
 function B:CreateMinimapIcon()
-	if BidderLDB and BidderIcon then
-		BidderIcon:Register("DKP Bidder", BidderLauncher, bidDB.minimapicon)
-		--if bidDB.minimapicon.hide==false then
-		--	BidderIcon:Show("DKP Bidder")
-		--end
-	end
-end
+	B.view.minimapIcon=CreateFrame("Button", "DKPBidderMapIcon", Minimap);
+	local button=B.view.minimapIcon;
+	button:SetHeight(32)
+	button:SetWidth(32)
+	button:SetFrameStrata("MEDIUM")
+	button:SetPoint("CENTER", -65.35,-38.8);--DkpBidder["settings"].icon_xpos, DkpBidder["settings"].icon_ypos)
+	button:SetMovable(true)
+	button:SetUserPlaced(true)
 
+
+	local texture=button:CreateTexture("DKPBidder_minimapnormaltexture");
+
+
+	texture:SetWidth(32);
+	texture:SetHeight(32);
+
+	texture:SetTexture([[Interface\Addons\DKP-Bidder\Arts\button_up.tga]]);--[[Interface\TaxiFrame\UI-TaxiFrame-TopRight]]
+	texture:SetAllPoints();
+	texture:SetTexCoord(0, 0.53125, 0, 0.53125);
+	texture:SetAlpha(1);
+	texture:Show();
+
+
+
+	button:SetNormalTexture(DKPBidder_minimapnormaltexture);
+	texture=button:CreateTexture("DKPBidder_minimappushedtexture");
+
+
+	texture:SetWidth(32);
+	texture:SetHeight(32);
+
+	texture:SetTexture([[Interface\Addons\DKP-Bidder\Arts\button_up.tga]]);--[[Interface\TaxiFrame\UI-TaxiFrame-TopRight]]
+	texture:SetAllPoints();
+	texture:SetTexCoord(0, 0.53125, 0, 0.53125);
+	texture:SetAlpha(1);
+	texture:Show();
+	button:SetPushedTexture(DKPBidder_minimappushedtexture);
+	button:SetHighlightTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
+
+	button:SetScript("OnEnter", function(self)
+		GameTooltip_SetDefaultAnchor(GameTooltip,  UIParent )
+		GameTooltip:SetPoint("bottom", B.view.minimapIcon, "top", 0, 0)
+		local cs = "|cffffffcc"
+		local ce = "|r"
+		GameTooltip:ClearLines()
+		GameTooltip:AddLine(L["DKP-Bidder "] .. B.ver)
+		GameTooltip:AddLine(string.format(L["%sLeft-Click%s to toggle the addon."], cs, ce))
+		GameTooltip:AddLine(string.format(L["%sRight-Click%s to move this button"], cs, ce))
+		GameTooltip:AddLine(string.format(L["%sShift+Click%s to hide this button"], cs, ce))
+		GameTooltip:Show()
+	end)
+
+	button:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+
+	local dragMode = nil
+
+	local function moveButton(self)
+		local centerX, centerY = Minimap:GetCenter()
+		local x, y = GetCursorPosition()
+		x, y = x / self:GetEffectiveScale() - centerX, y / self:GetEffectiveScale() - centerY
+		centerX, centerY = math.abs(x), math.abs(y)
+		centerX, centerY = (centerX / math.sqrt(centerX^2 + centerY^2)) * 80, (centerY / sqrt(centerX^2 + centerY^2)) * 80
+		local newXPos = x < 0 and -centerX or centerX;
+		local newYPos = y < 0 and -centerY or centerY;
+		self:ClearAllPoints()
+		self:SetPoint("CENTER",newXPos, newYPos);
+	end
+
+	button:SetScript("OnMouseUp", function(self)
+		self:SetScript("OnUpdate", nil)
+	end)
+
+	button:SetScript("OnMouseDown", function(self, button)
+		if IsShiftKeyDown() then
+			B:HideMinimapButton();
+		elseif button == "RightButton" then
+			dragMode = nil
+			self:SetScript("OnUpdate", moveButton)
+		elseif button == "LeftButton" then
+			B:ToggleBidder()
+		end
+	end)
+	self:CheckMinimapStatus();
+
+end
