@@ -3,6 +3,6 @@
 ## Notes: Bidder for DKP points. Usable as standalone bidder, or with DKP - Manager to manage points.
 ## Dependencies:
 ## OptionalDeps: Ace3
-## Version: 542 2xx
+## Version: 542 211
 ## SavedVariablesPerCharacter: DKPbidderDB
 embeds.xml
