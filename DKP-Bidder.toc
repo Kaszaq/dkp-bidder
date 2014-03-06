@@ -5,4 +5,4 @@
 ## OptionalDeps: Ace3
 ## Version: 542 2xx
 ## SavedVariablesPerCharacter: DKPbidderDB
-DkpBidderGUI.xml
+embeds.xml
