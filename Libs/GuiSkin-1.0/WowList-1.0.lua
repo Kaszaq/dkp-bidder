@@ -525,13 +525,13 @@ function WL:UpdateView()
     end
     for i=1,#self.data do
         if self:CheckFilters(self.data[i]) then
-            if i<=slider:GetValue()+self.skipBeforeSlider then self.skipBeforeSlider=self.skipBeforeSlider+1; end;
+			 if i<=math.floor(slider:GetValue())+self.skipBeforeSlider then self.skipBeforeSlider=self.skipBeforeSlider+1; end;
         end
     end
     
     local view=self.view;
     
-    lineplusoffset = slider:GetValue()+self.skipBeforeSlider;
+	lineplusoffset = math.floor(slider:GetValue())+self.skipBeforeSlider;
     for line=1,self.rows do
         
         lineplusoffset=lineplusoffset+1;

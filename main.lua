@@ -9,7 +9,7 @@ local GRI=LibStub("GuildRosterInfo-1.0");
 --/script LibStub("AceAddon-3.0"):GetAddon("DKP Bidder"):CreateTimerFrame(10);
 Bidder.bidMaster=nil
 local B=Bidder;
-Bidder.ver="542 211"
+Bidder.ver="602.0.0"
 Bidder.view={};
 --Bidder.players={};
 Bidder.transfer={};

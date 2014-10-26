@@ -305,11 +305,8 @@ function B:CreateTimerFrame(timeleft)--TODO: move this to gui lib, and fix so it
     
 end
 
-
-
-
 function B:ToggleBidder()
-    if (B.mainFrame:IsShown()==nil) then
+	if (not self.mainFrame:IsShown()) then
         
         self.mainFrame:Show();
     else self.mainFrame:Hide()
