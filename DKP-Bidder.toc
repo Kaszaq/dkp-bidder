@@ -1,8 +1,8 @@
-## Interface: 60000
+## Interface: 60100
 ## Title: DKP - |CFF2459FFBidder
 ## Notes: Bidder for DKP points. Usable as standalone bidder, or with DKP - Manager to manage points.
 ## Dependencies:
 ## OptionalDeps: Ace3
-## Version: 602.0.0
+## Version: 60100.0.0
 ## SavedVariablesPerCharacter: DKPbidderDB
 embeds.xml

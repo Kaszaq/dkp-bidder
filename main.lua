@@ -1,17 +1,14 @@
 --[[
 Made by ksq.
-Contact with me by bigkaszak [ a ] wp.pl .
-Any ideas, bug reports are welcome.
+Any ideas, bug reports are welcome on curse page.
 ]]
 Bidder = LibStub("AceAddon-3.0"):NewAddon("DKP Bidder", "AceComm-3.0","AceTimer-3.0","AceEvent-3.0","AceSerializer-3.0");
 local L = LibStub("AceLocale-3.0"):GetLocale("DKP-Bidder")
 local GRI=LibStub("GuildRosterInfo-1.0");
---/script LibStub("AceAddon-3.0"):GetAddon("DKP Bidder"):CreateTimerFrame(10);
 Bidder.bidMaster=nil
 local B=Bidder;
-Bidder.ver="602.0.0"
+Bidder.ver="60100.0.0"
 Bidder.view={};
---Bidder.players={};
 Bidder.transfer={};
 Bidder.minBid=0;
 Bidder.prefix="DKP_Bidder";
